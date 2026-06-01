@@ -10,5 +10,6 @@ groq
 streamlit
 pypdf
 python-docx
+docx2txt
 tiktoken
 python-dotenv

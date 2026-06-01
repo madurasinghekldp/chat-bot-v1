@@ -64,16 +64,33 @@ st.markdown("""
 # ── Load resources (cached) ───────────────────
 @st.cache_resource(show_spinner="Getting Lexi ready...")
 def load_resources():
-    if not Path(CHROMA_DIR).exists():
+    chroma_path = Path(CHROMA_DIR)
+    if not chroma_path.exists():
+        # First deploy on Streamlit Cloud: build vector DB from docs.
+        from ingest import main as run_ingest
+        run_ingest()
+
+    if not chroma_path.exists():
         return None, None
+
     vectorstore = load_vectorstore()
     chain       = build_chain(vectorstore)
     return vectorstore, chain
 
-vectorstore, chain = load_resources()
+try:
+    vectorstore, chain = load_resources()
+except Exception as e:
+    st.error(
+        "Failed to initialize the course database on startup. "
+        f"Details: {e}"
+    )
+    st.stop()
 
 if vectorstore is None:
-    st.error("Course database not found. Please run `python ingest.py` first.")
+    st.error(
+        "Course database could not be initialized. "
+        "Please confirm files exist in ./docs and redeploy."
+    )
     st.stop()
 
 
