@@ -1,16 +1,3 @@
-@st.cache_resource(show_spinner="Getting Lexi ready...")
-def load_resources():
-    # Auto-ingest if ChromaDB doesn't exist yet
-    if not Path(CHROMA_DIR).exists():
-        st.info("Building knowledge base for the first time — please wait...")
-        from ingest import main as run_ingest
-        run_ingest()
-
-    vectorstore = load_vectorstore()
-    chain       = build_chain(vectorstore)
-    return vectorstore, chain
-
-
 import os
 import re
 import streamlit as st
