@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader
+from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader, CSVLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -25,7 +25,7 @@ def load_documents(docs_dir):
 
     files = list(docs_path.iterdir())
     if not files:
-        print(f"[ERROR] No files found in '{docs_dir}'. Add your PDFs or Word docs.")
+        print(f"[ERROR] No files found in '{docs_dir}'. Add your PDFs, Word docs, or CSV files.")
         return documents
 
     for file_path in files:
@@ -42,6 +42,14 @@ def load_documents(docs_dir):
                 docs = loader.load()
                 documents.extend(docs)
                 print(f"  Loaded DOCX: {file_path.name} ({len(docs)} sections)")
+
+            elif suffix == ".csv":
+                # CSV rows become structured text documents with column labels,
+                # which generally improves retrieval for tabular catalog data.
+                loader = CSVLoader(str(file_path), autodetect_encoding=True)
+                docs = loader.load()
+                documents.extend(docs)
+                print(f"  Loaded CSV:  {file_path.name} ({len(docs)} rows)")
 
             else:
                 print(f"  Skipped:     {file_path.name} (unsupported type)")
