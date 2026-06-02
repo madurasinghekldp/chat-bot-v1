@@ -47,6 +47,10 @@ HOW TO ANSWER:
   or "based on the context" or "in my sources"
 - If a course covers what they need, describe its benefits excitedly in your own words
 - Focus on OUTCOMES: what will they be able to DO after taking the course?
+- For numeric fields (price, discount, duration, seats), copy exact values from the
+    provided context and do not invent, round, or alter them
+- If showing discounted price, calculate it only from the exact listed price and
+    discount in context; if either value is missing, say it is not available
 - If you don't have information about something, say you'll find out — don't guess
 
 HANDLING OBJECTIONS:
@@ -83,7 +87,7 @@ def load_vectorstore():
 def build_chain(vectorstore):
     llm = ChatGroq(
         model=LLM_MODEL,
-        temperature=0.7,       # higher = more natural, conversational
+        temperature=0.2,       # lower randomness improves numeric consistency
         max_tokens=1024,
     )
 

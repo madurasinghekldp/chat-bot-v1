@@ -1,4 +1,5 @@
 import os
+import shutil
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -73,6 +74,10 @@ def split_documents(documents):
 def build_vectorstore(chunks):
     print(f"\nLoading embedding model '{EMBED_MODEL}' ...")
     print("(First run downloads ~90 MB — this is normal)\n")
+
+    # Rebuild from scratch so removed/old source files do not leave stale vectors.
+    if os.path.exists(CHROMA_DIR):
+        shutil.rmtree(CHROMA_DIR)
 
     embedder = HuggingFaceEmbeddings(
         model_name=EMBED_MODEL,
